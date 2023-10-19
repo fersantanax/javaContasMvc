@@ -1,18 +1,49 @@
 package br.com.cotiinformatica.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import br.com.cotiinformatica.entities.Usuario;
+import br.com.cotiinformatica.helpers.Sha1CryptoHelper;
+import br.com.cotiinformatica.repositories.UsuarioRepository;
 
 @Controller
 public class AutenticarController {
 
-	//mapeando a URL (rota) para exibir a página
 	@RequestMapping(value = "/")
 	public ModelAndView autenticar() {
-		//definindo o nome da página que será exibida no navegador
-		//WEB-INF/views/autenticar.jsp
+
 		ModelAndView modelAndView = new ModelAndView("autenticar");
 		return modelAndView;
-	}	
+	}
+
+	@RequestMapping(value = "/autenticar-post", method = RequestMethod.POST)
+	public ModelAndView autenticarPost(HttpServletRequest request) {
+
+		ModelAndView modelAndView = new ModelAndView("autenticar");
+
+		try {
+
+			String email = request.getParameter("email");
+			String senha = Sha1CryptoHelper.getSha1Encrypt(request.getParameter("senha"));
+
+			UsuarioRepository usuarioRepository = new UsuarioRepository();
+			Usuario usuario = usuarioRepository.find(email, senha);
+
+			if (usuario != null) {
+
+				modelAndView.setViewName("redirect:/admin/dashboard");
+			} else {
+				throw new Exception("Acesso negado. Usuário inválido.");
+			}
+		} catch (Exception e) {
+			modelAndView.addObject("mensagem_erro", e.getMessage());
+		}
+
+		return modelAndView;
+	}
 }

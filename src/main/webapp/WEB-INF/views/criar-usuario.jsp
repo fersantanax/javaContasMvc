@@ -10,20 +10,7 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
 	rel="stylesheet" />
 
-<style>
-label.error {
-	color: red;
-	input
-	.error
-	{
-	border
-	:
-	2px
-	solid
-	red;
-}
-}
-</style>
+<link href="resources/style.css" rel="styleet"/>
 
 </head>
 <body class="bg-secondary">
@@ -36,7 +23,8 @@ label.error {
 					<p>Cadastre o seu usuário.</p>
 					<hr />
 
-					<h5>${mensagem}</h5>
+					<h5 class="text-sucess">${mensagem_sucesso}</h5>
+					<h5 class="text-danger">${mensagem_erro}</h5>
 
 					<form action="criar-usuario-post" method="post" id="formCadastro"
 						class="text-start">
@@ -110,12 +98,16 @@ label.error {
 					},
 					"senha" : {
 						required : true,
-						minlenght : 8,
-						maxlenght : 20
+						pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 					},
 					"senhaConfirmacao" : {
 						required : true,
 						equalTo : "#senha"
+					}
+				},
+				messages: {
+					"senha": {
+						pattern: "Informe pelo menos 1 letra maiúscula, 1 número, 1 símbolo e pelo menos 8 caracteres."
 					}
 				}
 			})
