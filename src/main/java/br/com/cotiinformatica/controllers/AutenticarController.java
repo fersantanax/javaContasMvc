@@ -27,7 +27,6 @@ public class AutenticarController {
 		ModelAndView modelAndView = new ModelAndView("autenticar");
 
 		try {
-
 			String email = request.getParameter("email");
 			String senha = Sha1CryptoHelper.getSha1Encrypt(request.getParameter("senha"));
 
@@ -35,6 +34,8 @@ public class AutenticarController {
 			Usuario usuario = usuarioRepository.find(email, senha);
 
 			if (usuario != null) {
+
+				request.getSession().setAttribute("usuario_auth", usuario);
 
 				modelAndView.setViewName("redirect:/admin/dashboard");
 			} else {
@@ -44,6 +45,16 @@ public class AutenticarController {
 			modelAndView.addObject("mensagem_erro", e.getMessage());
 		}
 
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/logout")
+	public ModelAndView logout(HttpServletRequest request) {
+
+		request.getSession().removeAttribute("usuario_auth");
+
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("redirect:/");
 		return modelAndView;
 	}
 }
